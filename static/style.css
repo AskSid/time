@@ -1,0 +1,90 @@
+/* static/style.css (Updated) */
+
+body {
+    margin: 40px auto; /* Vertical margin and horizontal centering */
+    max-width: 650px;   /* Limit content width for readability */
+    line-height: 1.6;   /* Comfortable line spacing */
+    font-size: 18px;    /* Larger, readable font size */
+    color: #444;        /* Dark grey text color */
+    padding: 0 10px;    /* Horizontal padding inside body */
+    background-color: #EEEEEE; /* Light grey background */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* System font stack */
+}
+
+h1, h2, h3 {
+    line-height: 1.2;   /* Tighter line height for headings */
+    color: #333;        /* Slightly darker heading color */
+    margin-bottom: 0.5em; /* Space below headings */
+}
+
+h1 {
+    font-size: 2.5em;  /* Larger main heading */
+    text-align: center; /* Center the main heading */
+    margin-top: 0;     /* Remove top margin for main heading */
+}
+
+h2 {
+    font-size: 1.8em;  /* Sub-heading size */
+    margin-top: 1.5em;  /* Space above sub-headings */
+}
+
+a {
+    color: inherit;     /* Inherit text color from parent */
+    text-decoration: none; /* Remove underlines from links */
+}
+
+.container {
+    background-color: white; /* White container background */
+    padding: 25px;        /* Increased padding inside container */
+    border-radius: 8px;    /* Rounded corners for container */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-top: 20px;      /* Space above the container */
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;       /* Increased padding for textarea */
+    margin-bottom: 15px;  /* More space below textarea */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    min-height: 150px;    /* Slightly taller textarea */
+    font-size: 18px;    /* Match textarea font size to body */
+    font-family: inherit; /* Inherit font from body */
+}
+
+.button-group {
+    margin-bottom: 15px;  /* More space below buttons */
+    text-align: center;   /* Center buttons horizontally */
+}
+
+button {
+    padding: 12px 20px;   /* Larger buttons */
+    border: none;
+    border-radius: 6px;    /* Slightly more rounded buttons */
+    background-color: #007BFF; /* A clean blue button color */
+    color: white;
+    cursor: pointer;
+    margin: 0 8px;       /* Space between buttons */
+    font-size: 18px;    /* Button font size */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+#output {
+    margin-top: 25px;      /* More space above output area */
+    border: 1px solid #ddd;
+    padding: 15px;        /* Padding in output area */
+    border-radius: 4px;
+    background-color: #f9f9f9; /* Slightly darker background for output */
+    font-size: 16px;     /* Slightly smaller font for output */
+}
+
+#structuredOutput {
+    white-space: pre-wrap;
+    font-family: monospace; /* Monospace font for JSON output */
+    font-size: 0.9em;
+    color: #222;        /* Darker color for output text */
+}

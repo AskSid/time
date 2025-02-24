@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVP Time Logger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Time Logger MVP</h1>
+        <textarea id="logText" placeholder="Enter your time log here..."></textarea>
+        <div class="button-group">
+            <button id="submitBtn">Process Log</button>
+            <button id="voiceBtn">Start Voice Log (Optional)</button>
+        </div>
+        <div id="output">
+            <h2>Structured Log Output:</h2>
+            <pre id="structuredOutput"></pre>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
