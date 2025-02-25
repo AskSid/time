@@ -3,6 +3,7 @@ import sqlite3
 import google.generativeai as genai
 import os
 import re
+import io
 
 app = Flask(__name__)
 
