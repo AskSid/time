@@ -76,4 +76,30 @@ document.addEventListener('DOMContentLoaded', () => {
         voiceBtn.disabled = true;
         voiceBtn.textContent = "Voice not supported in this browser";
     }
+
+    downloadCsvBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/download_csv'); // Fetch CSV endpoint
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Error downloading CSV: ${response.statusText}\n${errorData.error || errorData.message}`); // Show error
+                return;
+            }
+
+            // Get the CSV data as a Blob
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob); // Create a URL for the blob
+            const a = document.createElement('a'); // Create a temporary link element
+            a.href = url;
+            a.download = 'time_logs_export.csv'; // Set filename for download
+            document.body.appendChild(a); // Append to body (required for Firefox)
+            a.click(); // Programmatically click the link to trigger download
+            a.remove(); // Clean up by removing the link
+            window.URL.revokeObjectURL(url); // Revoke the URL
+
+        } catch (error) {
+            alert(`Error initiating CSV download: ${error}`);
+        }
+    });
 });

@@ -81,9 +81,53 @@ def process_log():
     except Exception as e:
         return jsonify({'error': str(e), 'gemini_error': True}), 500
 
+@app.route('/api/download_csv')
+def download_csv():
+    """
+    API endpoint to download the logs data as a CSV file.
+    """
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM logs")
+        rows = cursor.fetchall()
+
+        if not rows:
+            return jsonify({'message': 'No logs data available to download'}), 200 # Or handle no data case differently
+
+        # Create an in-memory text stream
+        csv_buffer = io.StringIO()
+        csv_writer = csv.writer(csv_buffer)
+
+        # Write header row
+        column_names = [description[0] for description in cursor.description]
+        csv_writer.writerow(column_names)
+
+        # Write data rows
+        csv_writer.writerows(rows)
+
+        conn.close()
+
+        # Prepare response - send the CSV data as a file download
+        output = io.BytesIO() # Use BytesIO for binary data
+        output.write(csv_buffer.getvalue().encode('utf-8')) # Encode to bytes
+        output.seek(0) # Reset stream position to the beginning
+
+        return send_file(
+            output,
+            mimetype='text/csv',
+            download_name='time_logs_export.csv',
+            as_attachment=True
+        )
+
+    except sqlite3.Error as e:
+        return jsonify({'error': f"Database error: {e}"}), 500
+    except Exception as e:
+        return jsonify({'error': f"Error generating CSV: {e}"}), 500
+
 
 if __name__ == '__main__':
-    # Initialize database on first run (or when logs.db is deleted)
     if not os.path.exists(DATABASE_FILE):
         init_db()
-    app.run(debug=True) # Debug mode for development
+    app.run(debug=True)
