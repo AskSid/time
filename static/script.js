@@ -89,111 +89,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Voice recognition functionality
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        
-        recognition.continuous = true;
-        recognition.interimResults = true;
+    // **Standard SpeechRecognition API (More Cross-Browser Compatible)**
+    if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) { // Check for both standard and webkit (for wider browser support)
+        const Recognition = window.SpeechRecognition || webkitSpeechRecognition; // Use standard if available, fallback to webkit
+        const recognition = new Recognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
         let isRecording = false;
-        let finalTranscript = '';
 
         voiceBtn.addEventListener('click', () => {
             if (!isRecording) {
-                // Start recording
-                finalTranscript = '';
                 recognition.start();
-                voiceBtn.innerHTML = `
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="6" y="4" width="4" height="16"></rect>
-                        <rect x="14" y="4" width="4" height="16"></rect>
-                    </svg>
-                    Stop Recording
-                `;
-                voiceBtn.classList.remove('secondary-button');
-                voiceBtn.classList.add('primary-button');
-                recordingIndicator.classList.remove('hidden');
-                logTextarea.placeholder = "Listening...";
+                voiceBtn.textContent = "Stop Voice Log";
+                isRecording = true;
+                logTextarea.placeholder = "Speak now...";
+                logTextarea.value = "";
             } else {
-                // Stop recording
                 recognition.stop();
-                resetVoiceUI();
+                voiceBtn.textContent = "Start Voice Log";
+                isRecording = false;
+                logTextarea.placeholder = "Enter your time log here...";
             }
-            isRecording = !isRecording;
         });
 
-        // Handle recognition results
-        recognition.onresult = (event) => {
-            let interimTranscript = '';
-            
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const transcript = event.results[i][0].transcript;
-                
-                if (event.results[i].isFinal) {
-                    finalTranscript += transcript + ' ';
-                } else {
-                    interimTranscript += transcript;
-                }
-            }
-            
-            // Update textarea with transcription
-            logTextarea.value = finalTranscript + interimTranscript;
-        };
-
-        // Handle recognition end (can happen automatically)
-        recognition.onend = () => {
-            if (isRecording) {
-                // If we're still in recording mode but recognition ended
-                resetVoiceUI();
-                isRecording = false;
-            }
-        };
-
-        // Handle errors
-        recognition.onerror = (event) => {
-            console.error('Speech Recognition Error:', event.error);
-            
-            // Show error message in output area
-            structuredOutputPre.textContent = JSON.stringify({
-                error: "Voice Recognition Error",
-                details: event.error
-            }, null, 2);
-            toggleOutputDisplay(true);
-            
-            resetVoiceUI();
-            isRecording = false;
-        };
-
-        function resetVoiceUI() {
-            voiceBtn.innerHTML = `
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                    <line x1="12" x2="12" y1="19" y2="22"></line>
-                </svg>
-                Start Voice Log
-            `;
-            voiceBtn.classList.remove('primary-button');
-            voiceBtn.classList.add('secondary-button');
-            recordingIndicator.classList.add('hidden');
-            logTextarea.placeholder = "Enter your time log in natural language...";
+        recognition.onresult = function(event) {
+            const transcript = Array.from(event.results)
+                .map(result => result[0])
+                .map(result => result[0].transcript) // Access transcript slightly differently in standard API
+                .join('');
+            logTextarea.value = transcript;
         }
 
+        recognition.onerror = function(event) {
+            structuredOutputPre.textContent = `Voice recognition error: ${event.error}, code: ${event.code}`; // Standard API has 'code'
+            voiceBtn.textContent = "Start Voice Log";
+            isRecording = false;
+            logTextarea.placeholder = "Enter your time log here...";
+        }
     } else {
-        // Voice recognition not supported
         voiceBtn.disabled = true;
-        voiceBtn.innerHTML = `
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                <line x1="12" x2="12" y1="19" y2="22"></line>
-            </svg>
-            Voice not supported
-        `;
-        voiceBtn.classList.add('disabled-button');
+        voiceBtn.textContent = "Voice not supported in this browser";
     }
-
+    
     // Handle CSV download
     downloadCsvBtn.addEventListener('click', async () => {
         // Show loading state
